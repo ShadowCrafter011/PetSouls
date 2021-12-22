@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,5 +31,15 @@ public interface PetInterface extends ConfigurationSerializable {
 	public void despawn();
 	
 	public void save();
+	
+	public void update();
+	
+	public void addLife();
+	
+	public void removeLife();
+	
+	public Entity getEntity();
+	
+	public String getName();
 
 }

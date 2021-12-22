@@ -5,8 +5,9 @@ author: shadowcrafter
 api-version: 1.18
 
 commands:
-   spawn:
-      description: spawn pets
    viewrecipe:
       description: View recipes for custom petsoul items
       usage: /<command> <itemkey>
+   disablepetsouls:
+      description: Enable or disable the PetSouls plugin
+      usage: /<command>

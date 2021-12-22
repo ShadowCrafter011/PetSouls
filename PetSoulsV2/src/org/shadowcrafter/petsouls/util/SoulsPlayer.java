@@ -36,6 +36,7 @@ public class SoulsPlayer {
 		inv.setContents(Inventories.list().getInventory(Inv.MENU).getContents());
 		
 		for (PetInterface pet : TemporaryData.get().getPets(p)) {
+			pet.update();
 			
 			inv.setItem(inv.firstEmpty(), pet.getPetItem());
 		}

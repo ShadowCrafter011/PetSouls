@@ -12,19 +12,20 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.AnimalTamer;
+import org.bukkit.entity.Cat;
+import org.bukkit.entity.Cat.Type;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
 import org.shadowcrafter.petsouls.PetSouls;
 import org.shadowcrafter.petsouls.items.ItemBuilder;
 import org.shadowcrafter.petsouls.pets.PetInterface;
 import org.shadowcrafter.petsouls.util.TemporaryData;
 
-@SerializableAs("PetWolf")
-public class PetWolf implements PetInterface, ConfigurationSerializable {
-	
-	final EntityType type = EntityType.WOLF;
+@SerializableAs("PetCat")
+public class PetCat implements PetInterface, ConfigurationSerializable {
+
+	final EntityType type = EntityType.CAT;
 	
 	boolean valid = false;
 	int id;
@@ -32,16 +33,19 @@ public class PetWolf implements PetInterface, ConfigurationSerializable {
 	UUID owner;
 	UUID uuid;
 	
-	Wolf pet;
+	Cat pet;
 	
 	int age;
+	
+	Type cattype;
 	
 	DyeColor collar;
 	String name;
 	int lives;
 	double health;
 	
-	boolean spawned = false;	
+	
+	boolean spawned = false;
 	
 	@Override
 	public void update() {
@@ -53,10 +57,11 @@ public class PetWolf implements PetInterface, ConfigurationSerializable {
 		}
 	}
 	
-	public PetWolf(Wolf pet) {
+	public PetCat(Cat pet) {
 		if (pet.isTamed() == false) return;
 		
 		this.id = PetSouls.getPlugin().addPet();
+		this.uuid = pet.getUniqueId();
 		
 		this.valid = true;
 		
@@ -65,32 +70,32 @@ public class PetWolf implements PetInterface, ConfigurationSerializable {
 		
 		this.age = pet.getAge();
 		
+		this.cattype = pet.getCatType();
 		this.collar = pet.getCollarColor();
 		this.name = pet.getCustomName();
 		
 		this.lives = 5;
 		this.health = pet.getHealth();
 		
-		this.uuid = pet.getUniqueId();
-		
 		this.spawned = true;
 	}
 	
-	private PetWolf(int id, UUID owner, DyeColor collar, String name, int lives, double health, int age, boolean spawned, UUID uuid) {
+	private PetCat(int id, Type cattype, UUID owner, DyeColor collar, String name, int lives, double health, int age, boolean spawned, UUID uuid) {
 		this.valid = true;
 		
 		this.id = id;
+		this.uuid = uuid;
 		
 		this.owner = owner;
 		
-		this.uuid = uuid;
-		
 		this.spawned = spawned;
 		if (spawned) {
-			pet = (Wolf) Bukkit.getEntity(uuid);
+			pet = (Cat) Bukkit.getEntity(uuid);
 		}
 		
 		this.age = age;
+		
+		this.cattype = cattype;
 		
 		this.collar = collar;
 		this.name = name;
@@ -98,92 +103,7 @@ public class PetWolf implements PetInterface, ConfigurationSerializable {
 		this.lives = lives;
 		this.health = health;
 	}
-	
-	@Override
-	public UUID getOwner() {
-		return owner;
-	}
-	
-	@Override
-	public int getID() {
-		return id;
-	}
-	
-	@Override
-	public boolean isValid() {
-		return valid;
-	}
-	
-	@Override
-	public boolean isSpawned() {
-		return spawned;
-	}
-	
-	@Override
-	public UUID getUUID() {
-		return pet != null ? pet.getUniqueId() : null;
-	}
-	
-	@Override
-	public ItemStack getPetItem() {
-		String name = "§2" + (this.name == null ? "Wolf" : this.name);
 		
-		ItemStack item = new ItemBuilder(Material.valueOf(type.toString() + "_SPAWN_EGG")).setName(name).setLore("§7" + id, " ", "§3Lives: " + lives, "§3Health: " + ((int) health <= 0 ? "dead" : (int) health), "§3Collar: " + collar.toString().toLowerCase(), "§3Age: " + (age == 0 ? "adult": "pup"), "§3Spawned: " + spawned, " ", "§5Left Click to " + (spawned ? "despawn" : "spawn") + " this pet").build();
-		
-		return item;
-	}
-	
-	@Override
-	public EntityType getType() {
-		return type;
-	}
-	
-	@Override
-	public void toggleExisting() {
-		if (spawned) {
-			despawn();
-		}else {
-			spawn(Bukkit.getPlayer(owner).getLocation());
-		}
-	}
-	
-	@Override
-	public void spawn(Location loc) {
-		if (spawned && !valid) return;
-		
-		pet = (Wolf) loc.getWorld().spawnEntity(loc, type);
-		
-		pet.setCustomName(name);
-		pet.setTamed(true);
-		pet.setOwner((AnimalTamer) Bukkit.getPlayer(owner));
-		pet.setCollarColor(collar);
-		pet.setAge(age);
-		
-		if (health <= 0) {
-			pet.setHealth(pet.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-		}else {
-			pet.setHealth(health);
-		}
-		
-		this.uuid = pet.getUniqueId();
-		
-		Bukkit.getPlayer(owner).sendMessage("§aSpawned " + (name == null ? "Wolf" : name));
-
-		this.spawned = true;
-	}
-
-	@Override
-	public void despawn() {
-		if (!spawned && !valid) return;
-		
-		update();
-		
-		Bukkit.getPlayer(owner).sendMessage("§aDespawned " + (name == null ? "Wolf" : name));
-		pet.remove();
-		
-		this.spawned = false;
-	}
-
 	@Override
 	public Map<String, Object> serialize() {
 		if (!valid) return null;
@@ -199,12 +119,14 @@ public class PetWolf implements PetInterface, ConfigurationSerializable {
 		result.put("age", Integer.toString(age));
 		result.put("id", Integer.toString(id));
 		result.put("uuid", uuid.toString());
+		result.put("cattype", cattype.toString());
 
 		return result;
 	}
 	
-	public static PetWolf deserialize(Map<String, Object> args) {
-		return new PetWolf(Integer.parseInt((String) args.get("id")),
+	public static PetCat deserialize(Map<String, Object> args) {
+		return new PetCat(Integer.parseInt((String) args.get("id")),
+						   Type.valueOf((String) args.get("cattype")),
 						   UUID.fromString((String) args.get("owner")), 
 						   DyeColor.valueOf((String) args.get("collar")),
 						   (String)	args.get("name"), 
@@ -214,6 +136,92 @@ public class PetWolf implements PetInterface, ConfigurationSerializable {
 						   Boolean.parseBoolean((String) args.get("spawned")),
 						   UUID.fromString((String) args.get("uuid")));
 	}
+
+	@Override
+	public EntityType getType() {
+		return type;
+	}
+
+	@Override
+	public UUID getOwner() {
+		return owner;
+	}
+
+	@Override
+	public int getID() {
+		return id;
+	}
+
+	@Override
+	public boolean isValid() {
+		return valid;
+	}
+
+	@Override
+	public boolean isSpawned() {
+		return spawned;
+	}
+
+	@Override
+	public ItemStack getPetItem() {
+		String name = "§2" + (this.name == null ? "Cat" : this.name);
+		
+		ItemStack item = new ItemBuilder(Material.valueOf(type.toString() + "_SPAWN_EGG")).setName(name).setLore("§7" + id, " ", "§3Lives: " + lives, "§3Health: " + ((int) health <= 0 ? "dead" : (int) health), "§3Type: " + cattype.toString().toLowerCase(), "§3Collar: " + collar.toString().toLowerCase(), "§3Age: " + (age == 0 ? "adult": "pup"), "§3Spawned: " + spawned, " ", "§5Left Click to " + (spawned ? "despawn" : "spawn") + " this pet").build();
+		
+		return item;
+	}
+
+	@Override
+	public UUID getUUID() {
+		return pet != null ? pet.getUniqueId() : null;
+	}
+
+	@Override
+	public void toggleExisting() {
+		if (spawned) {
+			despawn();
+		}else {
+			spawn(Bukkit.getPlayer(owner).getLocation());
+		}
+	}
+
+	@Override
+	public void spawn(Location loc) {
+		if (spawned && !valid) return;
+		
+		pet = (Cat) loc.getWorld().spawnEntity(loc, type);
+		
+		pet.setCustomName(name);
+		pet.setTamed(true);
+		pet.setOwner((AnimalTamer) Bukkit.getPlayer(owner));
+		pet.setCollarColor(collar);
+		pet.setAge(age);
+		pet.setCatType(cattype);
+		
+		if (health <= 0) {
+			pet.setHealth(pet.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+		}else {
+			pet.setHealth(health);
+		}
+		
+		this.uuid = pet.getUniqueId();
+		
+		Bukkit.getPlayer(owner).sendMessage("§aSpawned " + (name == null ? "Cat" : name));
+
+		this.spawned = true;
+	}
+
+	@Override
+	public void despawn() {
+		if (!spawned && !valid) return;
+		
+		update();
+		
+		Bukkit.getPlayer(owner).sendMessage("§aDespawned " + (name == null ? "Cat" : name));
+		pet.remove();
+		
+		this.spawned = false;
+	}
 	
 	@Override
 	public void addLife() {
@@ -221,15 +229,9 @@ public class PetWolf implements PetInterface, ConfigurationSerializable {
 	}
 	
 	@Override
-	public String getName() {
-		return name;
-	}
-	
-	@Override
 	public void removeLife() {
 		lives--;
 		this.spawned = false;
-		this.health = 20d;
 		
 		if (Bukkit.getPlayer(owner) != null && lives > 0) {
 			Bukkit.getPlayer(owner).sendMessage("§c" + (name == null ? "Cat" : name) + " died it has §5" + lives + "§c left. Your pet got despawned for it's own safety");
@@ -256,6 +258,11 @@ public class PetWolf implements PetInterface, ConfigurationSerializable {
 		return Bukkit.getEntity(uuid);
 	}
 	
+	@Override
+	public String getName() {
+		return name;
+	}
+
 	@Override
 	public void save() {
 		update();

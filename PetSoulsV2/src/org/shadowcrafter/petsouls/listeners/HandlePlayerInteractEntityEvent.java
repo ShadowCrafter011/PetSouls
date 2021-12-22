@@ -1,7 +1,6 @@
 package org.shadowcrafter.petsouls.listeners;
 
 import org.bukkit.entity.AnimalTamer;
-import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
@@ -9,8 +8,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.shadowcrafter.petsouls.pets.PetInterface;
 import org.shadowcrafter.petsouls.pets.PetUtils;
 import org.shadowcrafter.petsouls.util.ItemUtils;
+import org.shadowcrafter.petsouls.util.StringUtils;
 import org.shadowcrafter.petsouls.util.TemporaryData;
 
 public class HandlePlayerInteractEntityEvent implements Listener {
@@ -26,14 +27,20 @@ public class HandlePlayerInteractEntityEvent implements Listener {
 		//if (!ItemUtils.oneMatchesPersistantString("is_petsouls_item", "true", mainHand, offHand)) return;
 
 		if (!ItemUtils.oneDisplayNameMatches("§5Soul Stone", mainHand)) return;
+		
+		if (en instanceof Tameable && ((Tameable) en).isTamed() == false) return;
 
-		if (en instanceof Tameable && !((Tameable) en).isTamed() && !((Tameable) en).getOwner().equals((AnimalTamer) p) && en instanceof Axolotl == false) return;
+		if (!((Tameable) en).getOwner().equals((AnimalTamer) p)) return;
 
 		if (TemporaryData.get().hasTamedPet(p, en.getUniqueId())) return;
 		
-		TemporaryData.get().addPet(PetUtils.getRightType(en));
+		PetInterface pet = PetUtils.getRightType(en);
+		
+		if (pet == null) return;
+		
+		TemporaryData.get().addPet(pet);
 		e.setCancelled(true);
-		p.sendMessage("added pet");
+		p.sendMessage("§aYou bound §5" + (pet.getName() == null ? StringUtils.firstUpperCase(pet.getType().toString().toLowerCase()) : pet.getName()) + " §ato your soul");
 	}
 	
 }

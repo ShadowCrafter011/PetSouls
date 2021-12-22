@@ -19,4 +19,12 @@ public class StringUtils {
 		return new StringBuilder(str).reverse().toString();
 	}
 	
+	public static String firstUpperCase(String input) {
+		char[] chars = input.toCharArray();
+		
+		chars [0] = Character.toUpperCase(chars[0]);
+		
+		return String.valueOf(chars);
+	}
+	
 }
