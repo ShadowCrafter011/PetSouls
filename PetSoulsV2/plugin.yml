@@ -3,7 +3,6 @@ version: 0.0.1
 main: org.shadowcrafter.petsouls.PetSouls
 author: shadowcrafter
 api-version: 1.18
-load: STARTUP
 
 commands:
    viewrecipe:
