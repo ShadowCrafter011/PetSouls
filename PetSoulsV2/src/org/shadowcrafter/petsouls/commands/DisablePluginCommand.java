@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.shadowcrafter.petsouls.PetSouls;
 import org.shadowcrafter.petsouls.util.CommandUtils;
 
-public class DisablePlugin extends CommandUtils implements CommandExecutor {
+public class DisablePluginCommand extends CommandUtils implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

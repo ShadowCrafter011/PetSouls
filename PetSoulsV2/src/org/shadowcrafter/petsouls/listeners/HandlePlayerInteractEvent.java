@@ -19,7 +19,7 @@ public class HandlePlayerInteractEvent implements Listener {
 		if (!e.getItem().getItemMeta().getDisplayName().equals(Recipes.getRecipes().getSoulRealm().getItemMeta().getDisplayName())) return;
 		
 		e.setCancelled(true);
-		Players.list().getPlayer(e.getPlayer()).openPetsMenu();
+		Players.list().getPlayer(e.getPlayer()).openPetsMenu(1);
 	}
 
 }

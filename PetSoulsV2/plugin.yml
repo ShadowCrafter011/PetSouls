@@ -3,6 +3,7 @@ version: 0.0.1
 main: org.shadowcrafter.petsouls.PetSouls
 author: shadowcrafter
 api-version: 1.18
+load: STARTUP
 
 commands:
    viewrecipe:
@@ -10,4 +11,10 @@ commands:
       usage: /<command> <itemkey>
    disablepetsouls:
       description: Enable or disable the PetSouls plugin
+      usage: /<command>
+   despawnallpets:
+      description: Despawn all your pets
+      usage: /<command>
+   spawnallpets:
+      description: Spawn all your pets
       usage: /<command>

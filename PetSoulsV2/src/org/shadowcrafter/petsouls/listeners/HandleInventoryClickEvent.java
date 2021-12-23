@@ -1,5 +1,6 @@
 package org.shadowcrafter.petsouls.listeners;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.shadowcrafter.petsouls.inventories.Inv;
 import org.shadowcrafter.petsouls.pets.PetInterface;
 import org.shadowcrafter.petsouls.util.Players;
+import org.shadowcrafter.petsouls.util.SoulsPlayer;
 import org.shadowcrafter.petsouls.util.TemporaryData;
 
 public class HandleInventoryClickEvent implements Listener {
@@ -32,6 +34,49 @@ public class HandleInventoryClickEvent implements Listener {
 
 			ItemStack item = e.getCurrentItem();
 			
+			SoulsPlayer currentP = Players.list().getPlayer(p);
+			
+			if (item != null && item.getType() == Material.ARROW) {
+				
+				switch (item.getItemMeta().getDisplayName()) {
+				case "§aNext page":
+					currentP.openPetsMenu(currentP.getPage() + 1);
+					break;
+					
+				case "§aPrevious page":
+					currentP.openPetsMenu(currentP.getPage() - 1);
+					break;
+				
+				default:
+					break;
+				}
+				
+			}
+			
+			if (item != null && item.getType() == Material.BARRIER) {
+				p.closeInventory();
+			}
+			
+			if (item != null && item.getType() == Material.TORCH) {
+				p.performCommand("spawnallpets");
+				currentP.openPetsMenu(currentP.getPage());
+			}
+			
+			if (item != null && item.getType() == Material.SOUL_TORCH) {
+				p.performCommand("despawnallpets");
+				currentP.openPetsMenu(currentP.getPage());
+			}
+			
+			if (item != null && item.getType() == Material.GRAY_DYE) {
+				currentP.setSpawnSitting(true);
+				currentP.openPetsMenu(currentP.getPage());
+			}
+			
+			if (item != null && item.getType() == Material.LIME_DYE) {
+				currentP.setSpawnSitting(false);
+				currentP.openPetsMenu(currentP.getPage());
+			}
+			
 			if (item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName() && e.getClick() == ClickType.LEFT && item.getItemMeta().hasLore()) {
 
 				try {
@@ -40,8 +85,7 @@ public class HandleInventoryClickEvent implements Listener {
 					for (PetInterface pet : TemporaryData.get().getPets(p)) {
 						if (pet.getID() == petNum) {
 							pet.toggleExisting();
-							
-							Players.list().getPlayer(p).openPetsMenu();
+							currentP.openPetsMenu(currentP.getPage());
 						}
 					}
 					

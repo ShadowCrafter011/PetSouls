@@ -1,10 +1,14 @@
 package org.shadowcrafter.petsouls;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.shadowcrafter.petsouls.commands.DisablePlugin;
+import org.shadowcrafter.petsouls.commands.DespawnAllCommand;
+import org.shadowcrafter.petsouls.commands.DisablePluginCommand;
+import org.shadowcrafter.petsouls.commands.SpawnAllCommand;
 import org.shadowcrafter.petsouls.commands.ViewRecipeCommand;
 import org.shadowcrafter.petsouls.commands.tabcompleters.NullTabCompleter;
 import org.shadowcrafter.petsouls.commands.tabcompleters.ViewRecipeTabCompleter;
@@ -39,8 +43,7 @@ public class PetSouls extends JavaPlugin {
 	public void onEnable() {
 		plugin = this;
 		
-		getCommand("disablepetsouls").setExecutor(new DisablePlugin());
-		getCommand("disablepetsouls").setTabCompleter(new NullTabCompleter());
+		registerCommand("disablepetsouls", new DisablePluginCommand(), new NullTabCompleter());
 		
 		if (!getConfig().isSet("enabled")) {
 			getConfig().set("enabled", true);
@@ -49,16 +52,6 @@ public class PetSouls extends JavaPlugin {
 			System.out.println("PetSouls is disabled self destroying...");
 			return;
 		}
-		
-		PluginManager pl = Bukkit.getPluginManager();
-		
-		pl.registerEvents(new HandlePlayerInteractEntityEvent(), plugin);
-		pl.registerEvents(new HandleInventoryClickEvent(), plugin);
-		pl.registerEvents(new HandleInventoryCloseEvent(), plugin);
-		pl.registerEvents(new HandlePrepareItemCraft(), plugin);
-		pl.registerEvents(new HandleSoulsPlayerEvents(), plugin);
-		pl.registerEvents(new HandlePlayerInteractEvent(), plugin);
-		pl.registerEvents(new HandleEntityDeathEvent(), plugin);
 		
 		if (!getConfig().isSet("numpets")) {
 			numPets = 0;
@@ -79,12 +72,6 @@ public class PetSouls extends JavaPlugin {
 		Recipes.getRecipes();
 		Players.list();
 		
-		getCommand("viewrecipe").setExecutor(new ViewRecipeCommand());
-		getCommand("viewrecipe").setTabCompleter(new ViewRecipeTabCompleter());
-		
-		getCommand("disablepetsouls").setExecutor(new DisablePlugin());
-		getCommand("disablepetsouls").setTabCompleter(new NullTabCompleter());
-		
 		TemporaryData.get();
 		
 		System.out.println("[PetSouls] loading pets");
@@ -101,15 +88,39 @@ public class PetSouls extends JavaPlugin {
 					TemporaryData.get().addPet(pet);
 					current++;
 					loadedPets++;
-					System.out.println("[PetSouls] loaded " + 100/amount*(loadedPets) + "%");
+					if (loadedPets % 5 == 0) System.out.println("[PetSouls] loaded " + 100/amount*(loadedPets) + "%");
 				}else if (loadedPets == amount) {
 					System.out.println("[PetSouls] finished loading pets");
+					enableDependencies();
 					Bukkit.getScheduler().cancelTask(taskID);
 				}else {
 					current++;
 				}
 			}
-		}, 0, 3);
+		}, 0, 1);
+	}
+	
+	private void enableDependencies() {
+		PluginManager pl = Bukkit.getPluginManager();
+		
+		pl.registerEvents(new HandlePlayerInteractEntityEvent(), plugin);
+		pl.registerEvents(new HandleInventoryClickEvent(), plugin);
+		pl.registerEvents(new HandleInventoryCloseEvent(), plugin);
+		pl.registerEvents(new HandlePrepareItemCraft(), plugin);
+		pl.registerEvents(new HandleSoulsPlayerEvents(), plugin);
+		pl.registerEvents(new HandlePlayerInteractEvent(), plugin);
+		pl.registerEvents(new HandleEntityDeathEvent(), plugin);
+		
+		NullTabCompleter Null = new NullTabCompleter();
+		
+		registerCommand("viewrecipe", new ViewRecipeCommand(), new ViewRecipeTabCompleter());
+		registerCommand("spawnallpets", new SpawnAllCommand(), Null);
+		registerCommand("despawnallpets", new DespawnAllCommand(), Null);
+	}
+	
+	private void registerCommand(String command, CommandExecutor cmd, TabCompleter tab) {
+		getCommand(command).setExecutor(cmd);
+		getCommand(command).setTabCompleter(tab);
 	}
 	
 	public void onDisable() {

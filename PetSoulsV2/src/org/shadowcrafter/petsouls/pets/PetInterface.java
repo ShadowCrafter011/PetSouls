@@ -26,9 +26,9 @@ public interface PetInterface extends ConfigurationSerializable {
 	
 	public void toggleExisting();
 	
-	public void spawn(Location loc);
+	public void spawn(Location loc, boolean message, boolean sitting);
 	
-	public void despawn();
+	public void despawn(boolean message);
 	
 	public void save();
 	

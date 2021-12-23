@@ -20,10 +20,16 @@ public class Inventories {
 		invs = new HashMap<>();
 		
 		ItemStack gray = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName(" ").build();
-		@SuppressWarnings("unused")
 		ItemStack close = new ItemBuilder(Material.BARRIER).setName("§cClose").build();
 		
+		ItemStack spawn = new ItemBuilder(Material.TORCH).setName("§2Spawn all your pets").build();
+		ItemStack despawn = new ItemBuilder(Material.SOUL_TORCH).setName("§cDespawn all your pets").build();
+		
 		Inventory menu = InventoryUtils.fillBorders(Bukkit.createInventory(null, 5*9, "§3Your pets"), gray);
+		
+		menu.setItem(40, close);
+		menu.setItem(3, spawn);
+		menu.setItem(5, despawn);
 		
 		invs.put(Inv.MENU, menu);
 	}

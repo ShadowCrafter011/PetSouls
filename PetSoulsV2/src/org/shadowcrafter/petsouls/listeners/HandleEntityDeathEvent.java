@@ -1,7 +1,5 @@
 package org.shadowcrafter.petsouls.listeners;
 
-import java.util.ConcurrentModificationException;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -12,15 +10,16 @@ public class HandleEntityDeathEvent implements Listener {
 	
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent e) {
-		try {
-			for (PetInterface pet : TemporaryData.get().getAllPets()) {
-				if (pet.isSpawned() && pet.getUUID().compareTo(e.getEntity().getUniqueId()) == 0) {
-					pet.removeLife();
-				}
+		
+		PetInterface petInterfaceToRemove = null;
+		
+		for (PetInterface pet : TemporaryData.get().getAllPets()) {
+			if (pet.isSpawned() && pet.getUUID().compareTo(e.getEntity().getUniqueId()) == 0) {
+				petInterfaceToRemove = pet;
 			}
-		}catch (ConcurrentModificationException x) {
-			// Seems to be no problem
 		}
+		
+		if (petInterfaceToRemove != null) petInterfaceToRemove.removeLife();
 	}
 
 }
