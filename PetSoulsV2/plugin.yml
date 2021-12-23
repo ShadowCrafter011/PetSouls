@@ -5,6 +5,9 @@ author: shadowcrafter
 api-version: 1.18
 
 commands:
+   welcome:
+      description: All you need to know on getting started with PetSouls
+      usage: /<command>
    viewrecipe:
       description: View recipes for custom petsoul items
       usage: /<command> <itemkey>

@@ -5,17 +5,16 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.AnimalTamer;
-import org.bukkit.entity.Cat;
-import org.bukkit.entity.Cat.Type;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Parrot.Variant;
 import org.bukkit.inventory.ItemStack;
 import org.shadowcrafter.petsouls.PetSouls;
 import org.shadowcrafter.petsouls.items.ItemBuilder;
@@ -23,10 +22,10 @@ import org.shadowcrafter.petsouls.pets.PetInterface;
 import org.shadowcrafter.petsouls.util.Players;
 import org.shadowcrafter.petsouls.util.TemporaryData;
 
-@SerializableAs("PetCat")
-public class PetCat implements PetInterface, ConfigurationSerializable {
+@SerializableAs("PetParrot")
+public class PetParrot implements PetInterface, ConfigurationSerializable {
 
-	final EntityType type = EntityType.CAT;
+	final EntityType type = EntityType.PARROT;
 	
 	boolean valid = false;
 	int id;
@@ -34,35 +33,22 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 	UUID owner;
 	UUID uuid;
 	
-	Cat pet;
+	Parrot pet;
 	
 	int age;
 	
-	Type cattype;
-	
-	DyeColor collar;
+	Variant variant;
 	String name;
 	int lives;
 	double health;
-	String mods;	
+	String mods;
 	
-	boolean spawned = false;
+	boolean spawned = false;	
 	
-	@Override
-	public void update() {
-		if (pet != null) {
-			this.name = pet.getCustomName();
-			this.age = pet.getAge();
-			this.collar = pet.getCollarColor();
-			this.health = pet.getHealth();
-		}
-	}
-	
-	public PetCat(Cat pet) {
+	public PetParrot(Parrot pet) {
 		if (pet.isTamed() == false) return;
 		
 		this.id = PetSouls.getPlugin().addPet();
-		this.uuid = pet.getUniqueId();
 		
 		this.valid = true;
 		
@@ -71,36 +57,36 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 		
 		this.age = pet.getAge();
 		
-		this.cattype = pet.getCatType();
-		this.collar = pet.getCollarColor();
+		this.variant = pet.getVariant();
 		this.name = pet.getCustomName();
 		
-		this.lives = 9;
+		this.lives = 3;
 		this.health = pet.getHealth();
 		
 		this.mods = "mods:";
 		
+		this.uuid = pet.getUniqueId();
+		
 		this.spawned = true;
 	}
 	
-	private PetCat(int id, Type cattype, UUID owner, DyeColor collar, String name, int lives, double health, String mods, int age, boolean spawned, UUID uuid) {
+	private PetParrot(int id, UUID owner, Variant variant, String name, int lives, double health, String mods, int age, boolean spawned, UUID uuid) {
 		this.valid = true;
 		
 		this.id = id;
-		this.uuid = uuid;
 		
 		this.owner = owner;
 		
+		this.uuid = uuid;
+		
 		this.spawned = spawned;
 		if (spawned) {
-			pet = (Cat) Bukkit.getEntity(uuid);
+			pet = (Parrot) Bukkit.getEntity(uuid);
 		}
 		
 		this.age = age;
 		
-		this.cattype = cattype;
-		
-		this.collar = collar;
+		this.variant = variant;
 		this.name = name;
 		
 		this.mods = mods;
@@ -108,7 +94,7 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 		this.lives = lives;
 		this.health = health;
 	}
-		
+	
 	@Override
 	public Map<String, Object> serialize() {
 		if (!valid) return null;
@@ -117,31 +103,29 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 		
 		result.put("owner", owner.toString());
 		result.put("name", name);
-		result.put("collar", collar.toString());
+		result.put("variant", variant.toString());
 		result.put("lives", Integer.toString(lives));
 		result.put("health", Double.toString(health));
 		result.put("spawned", Boolean.toString(spawned));
 		result.put("age", Integer.toString(age));
 		result.put("id", Integer.toString(id));
 		result.put("uuid", uuid.toString());
-		result.put("cattype", cattype.toString());
 		result.put("mods", mods);
 
 		return result;
 	}
 	
-	public static PetCat deserialize(Map<String, Object> args) {
-		return new PetCat(Integer.parseInt((String) args.get("id")),
-						   Type.valueOf((String) args.get("cattype")),
-						   UUID.fromString((String) args.get("owner")), 
-						   DyeColor.valueOf((String) args.get("collar")),
-						   (String)	args.get("name"), 
-						   Integer.parseInt((String) args.get("lives")), 
-						   Double.parseDouble((String) args.get("health")),
-						   (String) args.get("mods"),
-						   Integer.parseInt((String) args.get("age")),
-						   Boolean.parseBoolean((String) args.get("spawned")),
-						   UUID.fromString((String) args.get("uuid")));
+	public static PetParrot deserialize(Map<String, Object> args) {
+		return new PetParrot(Integer.parseInt((String) args.get("id")),
+				   UUID.fromString((String) args.get("owner")), 
+				   Variant.valueOf((String) args.get("variant")),
+				   (String)	args.get("name"), 
+				   Integer.parseInt((String) args.get("lives")), 
+				   Double.parseDouble((String) args.get("health")),
+				   (String) args.get("mods"),
+				   Integer.parseInt((String) args.get("age")),
+				   Boolean.parseBoolean((String) args.get("spawned")),
+				   UUID.fromString((String) args.get("uuid")));
 	}
 
 	@Override
@@ -171,16 +155,15 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 
 	@Override
 	public ItemStack getPetItem() {
-		String name = "§2" + (this.name == null ? "Cat" : this.name);
+		String name = "§2" + (this.name == null ? "Parrot" : this.name);
 		
 		ItemStack item = new ItemBuilder(Material.valueOf(type.toString() + "_SPAWN_EGG")).setName(name)
 				.setLore("§7" + id,
 				" ",
 				"§3Lives: " + lives,
 				"§3Health: " + ((int) health <= 0 ? "dead" : (int) health),
-				"§3Type: " + cattype.toString().toLowerCase(),
-				"§3Collar: " + collar.toString().toLowerCase(),
-				"§3Age: " + (age == 0 ? "adult": "kitten"),
+				"§3Variant: " + variant.toString().toLowerCase(),
+				"§3Age: " + (age == 0 ? "adult": "chick"),
 				"§3Spawned: " + spawned,
 				" ",
 				"§5Left Click to " + ((int) health <= 0 ? "revive" : (spawned ? "despawn" : "spawn")) + " this pet")
@@ -191,7 +174,7 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 
 	@Override
 	public UUID getUUID() {
-		return pet != null ? pet.getUniqueId() : null;
+		return uuid;
 	}
 
 	@Override
@@ -207,14 +190,13 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 	public void spawn(Location loc, boolean message, boolean sitting) {
 		if (spawned && !valid) return;
 		
-		pet = (Cat) loc.getWorld().spawnEntity(loc, type);
+		pet = (Parrot) loc.getWorld().spawnEntity(loc, type);
 		
 		pet.setCustomName(name);
 		pet.setTamed(true);
 		pet.setOwner((AnimalTamer) Bukkit.getPlayer(owner));
-		pet.setCollarColor(collar);
+		pet.setVariant(variant);
 		pet.setAge(age);
-		pet.setCatType(cattype);
 		pet.setSitting(sitting);
 		
 		boolean revived = false;
@@ -228,7 +210,7 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 		
 		this.uuid = pet.getUniqueId();
 		
-		if (message) Bukkit.getPlayer(owner).sendMessage("§a" + (revived ? "revived" : "spawned") + " " + (name == null ? "Cat" : name));
+		if (message) Bukkit.getPlayer(owner).sendMessage("§a" + (revived ? "revived" : "spawned") + " " + (name == null ? "Parrot" : name));
 
 		this.spawned = true;
 	}
@@ -239,24 +221,45 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 		
 		update();
 		
-		if (message) Bukkit.getPlayer(owner).sendMessage("§aDespawned " + (name == null ? "Cat" : name));
+		if (message) Bukkit.getPlayer(owner).sendMessage("§aDespawned " + (name == null ? "Parrot" : name));
 		pet.remove();
 		
 		this.spawned = false;
 	}
-	
+
+	@Override
+	public void save() {
+		update();
+		
+		PetSouls main = PetSouls.getPlugin();
+		
+		main.getConfig().set("pets." + id, this);
+		
+		main.saveConfig();
+	}
+
+	@Override
+	public void update() {
+		if (pet != null) {
+			this.name = pet.getCustomName();
+			this.age = pet.getAge();
+			this.variant = pet.getVariant();
+			this.health = pet.getHealth();
+		}
+	}
+
 	@Override
 	public void addLife() {
 		lives++;
 	}
-	
+
 	@Override
 	public void removeLife() {
 		lives--;
 		this.spawned = false;
 		
 		if (Bukkit.getPlayer(owner) != null && lives > 0) {
-			Bukkit.getPlayer(owner).sendMessage("§c" + (name == null ? "Cat" : name) + " died it has §5" + lives + "§c left. Your pet got despawned for it's own safety");
+			Bukkit.getPlayer(owner).sendMessage("§c" + (name == null ? "Parrot" : name) + " died it has §5" + lives + "§c left. Your pet got despawned for it's own safety");
 		}
 		
 		if (lives == 0) {
@@ -270,30 +273,19 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 			TemporaryData.get().removePet(this);
 			
 			if (Bukkit.getPlayer(owner) != null) {
-				Bukkit.getPlayer(owner).sendMessage("§c" + (name == null ? "Cat" : name) + " died. Because it had §4zero §clives left it traveled to the realm of dead souls");
+				Bukkit.getPlayer(owner).sendMessage("§c" + (name == null ? "Parrot" : name) + " died. Because it had §4zero §clives left it traveled to the realm of dead souls");
 			}
 		}
 	}
-	
+
 	@Override
 	public Entity getEntity() {
-		return Bukkit.getEntity(uuid);
-	}
-	
-	@Override
-	public String getName() {
-		return name;
+		return pet;
 	}
 
 	@Override
-	public void save() {
-		update();
-		
-		PetSouls main = PetSouls.getPlugin();
-		
-		main.getConfig().set("pets." + id, this);
-		
-		main.saveConfig();
+	public String getName() {
+		return name;
 	}
 
 }

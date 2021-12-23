@@ -2,8 +2,10 @@ package org.shadowcrafter.petsouls.pets;
 
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Wolf;
 import org.shadowcrafter.petsouls.pets.types.PetCat;
+import org.shadowcrafter.petsouls.pets.types.PetParrot;
 import org.shadowcrafter.petsouls.pets.types.PetWolf;
 
 public class PetUtils {
@@ -15,6 +17,9 @@ public class PetUtils {
 		
 		case CAT:
 			return new PetCat((Cat) pet);
+			
+		case PARROT:
+			return new PetParrot((Parrot) pet);
 			
 		default:
 			return null;

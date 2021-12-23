@@ -10,6 +10,7 @@ import org.shadowcrafter.petsouls.commands.DespawnAllCommand;
 import org.shadowcrafter.petsouls.commands.DisablePluginCommand;
 import org.shadowcrafter.petsouls.commands.SpawnAllCommand;
 import org.shadowcrafter.petsouls.commands.ViewRecipeCommand;
+import org.shadowcrafter.petsouls.commands.WelcomeCommand;
 import org.shadowcrafter.petsouls.commands.tabcompleters.NullTabCompleter;
 import org.shadowcrafter.petsouls.commands.tabcompleters.ViewRecipeTabCompleter;
 import org.shadowcrafter.petsouls.items.NamespacedKeys;
@@ -23,6 +24,7 @@ import org.shadowcrafter.petsouls.listeners.HandlePrepareItemCraft;
 import org.shadowcrafter.petsouls.listeners.HandleSoulsPlayerEvents;
 import org.shadowcrafter.petsouls.pets.PetInterface;
 import org.shadowcrafter.petsouls.pets.types.PetCat;
+import org.shadowcrafter.petsouls.pets.types.PetParrot;
 import org.shadowcrafter.petsouls.pets.types.PetWolf;
 import org.shadowcrafter.petsouls.util.Players;
 import org.shadowcrafter.petsouls.util.TemporaryData;
@@ -38,6 +40,7 @@ public class PetSouls extends JavaPlugin {
 	static {
 		ConfigurationSerialization.registerClass(PetWolf.class, "PetWolf");
 		ConfigurationSerialization.registerClass(PetCat.class, "PetCat");
+		ConfigurationSerialization.registerClass(PetParrot.class, "PetParrot");
 	}
 	
 	public void onEnable() {
@@ -116,6 +119,7 @@ public class PetSouls extends JavaPlugin {
 		registerCommand("viewrecipe", new ViewRecipeCommand(), new ViewRecipeTabCompleter());
 		registerCommand("spawnallpets", new SpawnAllCommand(), Null);
 		registerCommand("despawnallpets", new DespawnAllCommand(), Null);
+		registerCommand("welcome", new WelcomeCommand(), Null);
 	}
 	
 	private void registerCommand(String command, CommandExecutor cmd, TabCompleter tab) {

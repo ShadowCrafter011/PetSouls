@@ -67,13 +67,39 @@ public class HandleInventoryClickEvent implements Listener {
 				currentP.openPetsMenu(currentP.getPage());
 			}
 			
-			if (item != null && item.getType() == Material.GRAY_DYE) {
-				currentP.setSpawnSitting(true);
+			if (item != null && item.getType() == Material.GRAY_DYE && item.hasItemMeta()) {
+				
+				switch (item.getItemMeta().getDisplayName()) {
+				case "§2Spawn pets in sitting position":
+					currentP.setSpawnSitting(true);
+					break;
+					
+				case "§2Show entity cramming warning":
+					currentP.setNoCrammingWarning(false);
+					break;
+					
+				default:
+					break;
+				}
+				
 				currentP.openPetsMenu(currentP.getPage());
 			}
 			
-			if (item != null && item.getType() == Material.LIME_DYE) {
-				currentP.setSpawnSitting(false);
+			if (item != null && item.getType() == Material.LIME_DYE && item.hasItemMeta()) {
+				
+				switch (item.getItemMeta().getDisplayName()) {
+				case "§2Spawn pets in sitting position":
+					currentP.setSpawnSitting(false);
+					break;
+					
+				case "§2Show entity cramming warning":
+					currentP.setNoCrammingWarning(true);
+					break;
+					
+				default:
+					break;
+				}
+				
 				currentP.openPetsMenu(currentP.getPage());
 			}
 			

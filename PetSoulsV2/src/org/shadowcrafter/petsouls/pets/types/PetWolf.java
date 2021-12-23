@@ -176,15 +176,18 @@ public class PetWolf implements PetInterface, ConfigurationSerializable {
 		pet.setAge(age);
 		pet.setSitting(sitting);
 		
+		boolean revived = false;
+		
 		if (health <= 0) {
 			pet.setHealth(pet.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+			revived = true;
 		}else {
 			pet.setHealth(health);
 		}
 		
 		this.uuid = pet.getUniqueId();
 		
-		if (message) Bukkit.getPlayer(owner).sendMessage("§aSpawned " + (name == null ? "Wolf" : name));
+		if (message) Bukkit.getPlayer(owner).sendMessage("§a" + (revived ? "revived" : "spawned") + " " + (name == null ? "Wolf" : name));
 
 		this.spawned = true;
 	}
@@ -248,7 +251,6 @@ public class PetWolf implements PetInterface, ConfigurationSerializable {
 	public void removeLife() {
 		lives--;
 		this.spawned = false;
-		this.health = 20d;
 		
 		if (Bukkit.getPlayer(owner) != null && lives > 0) {
 			Bukkit.getPlayer(owner).sendMessage("§c" + (name == null ? "Wolf" : name) + " died it has §5" + lives + "§c left. Your pet got despawned for it's own safety");

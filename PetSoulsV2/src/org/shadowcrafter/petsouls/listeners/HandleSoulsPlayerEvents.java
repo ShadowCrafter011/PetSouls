@@ -11,6 +11,7 @@ public class HandleSoulsPlayerEvents implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Players.list().addPlayer(e.getPlayer());
+		Players.list().getPlayer(e.getPlayer()).welcome(false);
 	}
 	
 	@EventHandler
