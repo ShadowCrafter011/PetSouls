@@ -1,5 +1,5 @@
 name: PetSouls
-version: 0.0.1
+version: 0.1.0
 main: org.shadowcrafter.petsouls.PetSouls
 author: shadowcrafter
 api-version: 1.18
