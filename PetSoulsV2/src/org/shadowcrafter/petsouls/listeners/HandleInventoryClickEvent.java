@@ -1,6 +1,5 @@
 package org.shadowcrafter.petsouls.listeners;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,75 +33,87 @@ public class HandleInventoryClickEvent implements Listener {
 
 			ItemStack item = e.getCurrentItem();
 			
-			SoulsPlayer currentP = Players.list().getPlayer(p);
+			SoulsPlayer sp = Players.list().getPlayer(p);
 			
-			if (item != null && item.getType() == Material.ARROW) {
+			if (item == null) return;
+			
+			//Settings and Actions
+			switch (item.getType()) {
+			case ARROW:
+				if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) break;
 				
 				switch (item.getItemMeta().getDisplayName()) {
 				case "§aNext page":
-					currentP.openPetsMenu(currentP.getPage() + 1);
+					sp.openPetsMenu(sp.getPage() + 1);
 					break;
 					
 				case "§aPrevious page":
-					currentP.openPetsMenu(currentP.getPage() - 1);
+					sp.openPetsMenu(sp.getPage() - 1);
 					break;
 				
 				default:
 					break;
 				}
 				
-			}
-			
-			if (item != null && item.getType() == Material.BARRIER) {
+				break;
+				
+			case BARRIER:
 				p.closeInventory();
-			}
-			
-			if (item != null && item.getType() == Material.TORCH) {
+				break;
+				
+			case TORCH:
 				p.performCommand("spawnallpets");
-				currentP.openPetsMenu(currentP.getPage());
-			}
-			
-			if (item != null && item.getType() == Material.SOUL_TORCH) {
+				sp.openPetsMenu(sp.getPage());
+				break;
+				
+			case SOUL_TORCH:
 				p.performCommand("despawnallpets");
-				currentP.openPetsMenu(currentP.getPage());
-			}
-			
-			if (item != null && item.getType() == Material.GRAY_DYE && item.hasItemMeta()) {
+				sp.openPetsMenu(sp.getPage());
+				break;
+				
+			case GRAY_DYE:
+				if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) break;
 				
 				switch (item.getItemMeta().getDisplayName()) {
 				case "§2Spawn pets in sitting position":
-					currentP.setSpawnSitting(true);
+					sp.setSpawnSitting(true);
 					break;
 					
 				case "§2Show entity cramming warning":
-					currentP.setNoCrammingWarning(false);
+					sp.setNoCrammingWarning(false);
 					break;
 					
 				default:
 					break;
 				}
+				sp.openPetsMenu(sp.getPage());
 				
-				currentP.openPetsMenu(currentP.getPage());
-			}
-			
-			if (item != null && item.getType() == Material.LIME_DYE && item.hasItemMeta()) {
+				break;
+				
+			case LIME_DYE:
+				if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) break;
 				
 				switch (item.getItemMeta().getDisplayName()) {
 				case "§2Spawn pets in sitting position":
-					currentP.setSpawnSitting(false);
+					sp.setSpawnSitting(false);
 					break;
 					
 				case "§2Show entity cramming warning":
-					currentP.setNoCrammingWarning(true);
+					sp.setNoCrammingWarning(true);
 					break;
 					
 				default:
 					break;
 				}
+				sp.openPetsMenu(sp.getPage());
 				
-				currentP.openPetsMenu(currentP.getPage());
+				break;
+			
+			default:
+				break;
 			}
 			
+			//Spawn / Despawn pet on interaction
 			if (item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName() && e.getClick() == ClickType.LEFT && item.getItemMeta().hasLore()) {
 
 				try {
@@ -111,7 +122,7 @@ public class HandleInventoryClickEvent implements Listener {
 					for (PetInterface pet : TemporaryData.get().getPets(p)) {
 						if (pet.getID() == petNum) {
 							pet.toggleExisting();
-							currentP.openPetsMenu(currentP.getPage());
+							sp.openPetsMenu(sp.getPage());
 						}
 					}
 					

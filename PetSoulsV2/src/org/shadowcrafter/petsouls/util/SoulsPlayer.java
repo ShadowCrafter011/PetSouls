@@ -88,29 +88,11 @@ public class SoulsPlayer {
 		this.p = p;
 		this.crammingWarningLevel = 0;
 		
-		if (!config.isSet("players." + p.getUniqueId() + ".spawnsitting")) {
-			this.spawnSitting = false;
-			config.set("players." + p.getUniqueId() + ".spawnsitting", false);
-			PetSouls.getPlugin().saveConfig();
-		}else {
-			this.spawnSitting = config.getBoolean("players." + p.getUniqueId() + ".spawnsitting");
-		}
+		this.spawnSitting = (boolean) ConfigUtils.validatePath(PetSouls.getPlugin(), "players." + p.getUniqueId() + ".spawnsitting", false);
 		
-		if (!config.isSet("players." + p.getUniqueId() + ".crammingwarning")) {
-			this.noCrammingWarning = false;
-			config.set("players." + p.getUniqueId() + ".crammingwarning", true);
-			PetSouls.getPlugin().saveConfig();
-		}else {
-			this.noCrammingWarning = config.getBoolean("players." + p.getUniqueId() + ".crammingwarning");
-		}
+		this.noCrammingWarning = (boolean) ConfigUtils.validatePath(PetSouls.getPlugin(), "players." + p.getUniqueId() + ".crammingwarning", true);
 		
-		if (!config.isSet("players." + p.getUniqueId() + ".welcome")) {
-			this.welcome = true;
-			config.set("players." + p.getUniqueId() + ".welcome", true);
-			PetSouls.getPlugin().saveConfig();
-		}else {
-			welcome = config.getBoolean("players." + p.getUniqueId() + ".welcome");
-		}
+		this.welcome = (boolean) ConfigUtils.validatePath(PetSouls.getPlugin(), "players." + p.getUniqueId() + ".welcome", true);
 	}
 	
 	public Player getPlayer() {

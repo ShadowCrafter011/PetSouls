@@ -10,11 +10,11 @@ public class HandleInventoryCloseEvent implements Listener {
 	
 	@EventHandler
 	public void onPlayerCloseEvent(InventoryCloseEvent e) {
-		SoulsPlayer p = Players.list().getPlayer(e.getPlayer());
+		SoulsPlayer sp = Players.list().getPlayer(e.getPlayer());
 		
-		if (p == null) return;
+		if (sp == null) return;
 		
-		Players.list().getPlayer(e.getPlayer()).resetInventoryView();
+		sp.resetInventoryView();
 	}
 
 }

@@ -38,7 +38,7 @@ public class SpawnAllCommand extends CommandUtils implements CommandExecutor {
 		int crammingLimit = p.getWorld().getGameRuleValue(GameRule.MAX_ENTITY_CRAMMING);
 		if (pets.size() <= crammingLimit - 1) {
 			for (PetInterface pet : TemporaryData.get().getPets(p)) {
-				if (!pet.isSpawned()) pet.spawn(p.getLocation(), false, sp.isSpawnSitting());
+				pet.spawn(p.getLocation(), false, sp.isSpawnSitting());
 			}
 			return endCommand(sender, "§aSpawned all your pets");
 		}else {

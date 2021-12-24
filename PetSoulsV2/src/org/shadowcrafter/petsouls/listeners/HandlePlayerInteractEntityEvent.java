@@ -23,8 +23,6 @@ public class HandlePlayerInteractEntityEvent implements Listener {
 		Entity en = e.getRightClicked();
 		
 		if (!mainHand.hasItemMeta() || !mainHand.getItemMeta().hasDisplayName()) return;
-		
-		//if (!ItemUtils.oneMatchesPersistantString("is_petsouls_item", "true", mainHand, offHand)) return;
 
 		if (!ItemUtils.oneDisplayNameMatches("§5Soul Stone", mainHand)) return;
 		
@@ -36,7 +34,10 @@ public class HandlePlayerInteractEntityEvent implements Listener {
 		
 		PetInterface pet = PetUtils.getRightType(en);
 		
-		if (pet == null) return;
+		if (pet == null) {
+			p.sendMessage("§cThis Entity either can't be added as pet or isn't supported yet");
+			return;
+		}
 		
 		TemporaryData.get().addPet(pet);
 		e.setCancelled(true);

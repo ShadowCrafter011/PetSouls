@@ -16,7 +16,7 @@ public class HandlePrepareItemCraft extends ItemUtils implements Listener {
 	public void onPrepareItemCraft(PrepareItemCraftEvent e) {	
 		if (e.getRecipe() == null) return;
 		if (oneMatches(e.getRecipe().getResult(), Recipes.getRecipes().getItems())) {
-			e.getInventory().setResult(new ItemBuilder(e.getInventory().getResult()).addRandomNBTTag().addNBTString("true", "is_petsouls_item").build());
+			e.getInventory().setResult(new ItemBuilder(e.getInventory().getResult()).addRandomNBTTag().build());
 		}
 		for (ItemStack item : e.getInventory().getMatrix()) {
 			if (item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
