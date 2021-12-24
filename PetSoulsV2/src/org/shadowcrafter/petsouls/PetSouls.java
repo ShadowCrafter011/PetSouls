@@ -29,6 +29,8 @@ import org.shadowcrafter.petsouls.pets.types.PetWolf;
 import org.shadowcrafter.petsouls.util.Players;
 import org.shadowcrafter.petsouls.util.TemporaryData;
 
+import net.md_5.bungee.api.chat.TextComponent;
+
 public class PetSouls extends JavaPlugin {
 	
 	private static PetSouls plugin;
@@ -44,6 +46,15 @@ public class PetSouls extends JavaPlugin {
 	}
 	
 	public void onEnable() {
+		try {
+			new TextComponent().getClass();
+		} catch (NoClassDefFoundError e) {
+			System.out.println("[PetSouls] This plugin doesn't support the server host you are using. In case of doubt use spigotmc (https://getbukkit.org/)");
+			System.out.println("[PetSouls] Self destroyings...");
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
+		
 		plugin = this;
 		
 		registerCommand("disablepetsouls", new DisablePluginCommand(), new NullTabCompleter());
@@ -52,7 +63,9 @@ public class PetSouls extends JavaPlugin {
 			getConfig().set("enabled", true);
 			saveConfig();
 		}else if (!getConfig().getBoolean("enabled")) {
-			System.out.println("PetSouls is disabled self destroying...");
+			System.out.println("[PetSouls] this plugin was temporarly disabled by the owner");
+			System.out.println("[PetSouls] Self destroying...");
+			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
 		

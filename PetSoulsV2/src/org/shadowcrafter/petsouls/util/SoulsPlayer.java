@@ -41,12 +41,12 @@ public class SoulsPlayer {
 		config.set("players." + p.getUniqueId() + ".welcome", false);
 		PetSouls.getPlugin().saveConfig();
 		
-		TextComponent text1 = new TextComponent("§bWelcome to PetSouls. To get started watch our");
-		TextComponent clickable = new TextComponent(" §dTutorial ");
-		TextComponent text2 = new TextComponent("§bor use the");
-		TextComponent command = new TextComponent(" §d/viewrecipe command");
-		TextComponent text3 = new TextComponent("§b. You can view this message again with the");
-		TextComponent command2 = new TextComponent("§d /welcome command");
+		TextComponent text1 = new TextComponent("§2Welcome to PetSouls. To get started watch our");
+		TextComponent clickable = new TextComponent(" §5Tutorial ");
+		TextComponent text2 = new TextComponent("§2or use the");
+		TextComponent command = new TextComponent(" §5/viewrecipe command");
+		TextComponent text3 = new TextComponent("§2. You can view this message again with the");
+		TextComponent command2 = new TextComponent("§5 /welcome command");
 		clickable.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=N5iAGUvGWLg"));
 		clickable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder("§aClick to open the tutorial on Youtube").create())));
 		command.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/viewrecipe SOUL_REALM"));
