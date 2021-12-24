@@ -19,7 +19,7 @@ public class DespawnAllCommand extends CommandUtils implements CommandExecutor {
 		if (args.length != 0) return endCommand(sender, "§cPlease use §5/despawnallpets");
 		
 		for (PetInterface pet : TemporaryData.get().getPets(p)) {
-			pet.despawn(false);
+			if (pet.isSpawned()) pet.despawn(false);
 		}
 		
 		return endCommand(sender, "§aDespawned all your pets");
