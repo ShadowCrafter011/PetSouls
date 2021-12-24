@@ -90,7 +90,6 @@ public class PetSouls extends JavaPlugin {
 		
 		TemporaryData.get();
 		
-		System.out.println("[PetSouls] loading pets");
 		taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			
 			int current = 1;
@@ -99,12 +98,13 @@ public class PetSouls extends JavaPlugin {
 			
 			@Override
 			public void run() {
+				if (current == 1) System.out.println("[PetSouls] loading pets...");
 				if (getConfig().isSet("pets." + current)) {
 					PetInterface pet = (PetInterface) getConfig().get("pets." + current);
 					TemporaryData.get().addPet(pet);
 					current++;
 					loadedPets++;
-					if (loadedPets % 5 == 0) System.out.println("[PetSouls] loaded " + 100/amount*(loadedPets) + "%");
+					if (loadedPets % 10 == 0) System.out.println("[PetSouls] loading pets: " + Math.round(100d/(double)amount*(double)loadedPets) + "%");
 				}else if (loadedPets == amount) {
 					System.out.println("[PetSouls] finished loading pets");
 					enableDependencies();

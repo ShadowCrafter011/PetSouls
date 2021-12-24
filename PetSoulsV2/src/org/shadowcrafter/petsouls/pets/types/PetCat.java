@@ -49,12 +49,26 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 	boolean spawned = false;
 	
 	@Override
+	public Integer getLives() {
+		return lives;
+	}
+	
+	@Override
 	public void update() {
 		if (pet != null) {
 			this.name = pet.getCustomName();
 			this.age = pet.getAge();
 			this.collar = pet.getCollarColor();
 			this.health = pet.getHealth();
+		}
+	}
+	
+	@Override
+	public void toggleSitting() {
+		if (spawned) {
+			pet.setSitting(!pet.isSitting());
+		}else {
+			spawn(Bukkit.getPlayer(owner).getLocation(), true, !Players.list().getPlayer(Bukkit.getPlayer(owner)).isSpawnSitting());
 		}
 	}
 	
@@ -182,8 +196,11 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 				"§3Collar: " + collar.toString().toLowerCase(),
 				"§3Age: " + (age == 0 ? "adult": "kitten"),
 				"§3Spawned: " + spawned,
+				"§3Position: " + (spawned ? (pet.isSitting() ? "sitting" : "standing") : "despawned"),
 				" ",
-				"§5Left Click to " + ((int) health <= 0 ? "revive" : (spawned ? "despawn" : "spawn")) + " this pet")
+				"§9[Left Click] §2to " + ((int) health <= 0 ? "revive" : (spawned ? "despawn" : "spawn")) + " this pet",
+				"§9[Right Click] §2to make this pet " + (spawned ? (pet.isSitting() ? "stand up" : "sit down") : (Players.list().getPlayer(Bukkit.getPlayer(owner)).isSpawnSitting() ? "spawn and stand up" : "spawn and sit down")),
+				"§9[Shift Left Click] §2To remove this pet (Requires confirmation)")
 				.build();
 		
 		return item;
@@ -251,11 +268,11 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 	}
 	
 	@Override
-	public void removeLife() {
+	public void removeLife(boolean message) {
 		lives--;
 		this.spawned = false;
 		
-		if (Bukkit.getPlayer(owner) != null && lives > 0) {
+		if (Bukkit.getPlayer(owner) != null && lives > 0 && message) {
 			Bukkit.getPlayer(owner).sendMessage("§c" + (name == null ? "Cat" : name) + " died it has §5" + lives + "§c left. Your pet got despawned for it's own safety");
 		}
 		
@@ -269,7 +286,7 @@ public class PetCat implements PetInterface, ConfigurationSerializable {
 			
 			TemporaryData.get().removePet(this);
 			
-			if (Bukkit.getPlayer(owner) != null) {
+			if (Bukkit.getPlayer(owner) != null && message) {
 				Bukkit.getPlayer(owner).sendMessage("§c" + (name == null ? "Cat" : name) + " died. Because it had §4zero §clives left it traveled to the realm of dead souls");
 			}
 		}

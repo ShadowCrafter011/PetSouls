@@ -1,12 +1,15 @@
 package org.shadowcrafter.petsouls.listeners;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.shadowcrafter.petsouls.action.DeletePetAction;
 import org.shadowcrafter.petsouls.inventories.Inv;
+import org.shadowcrafter.petsouls.items.ItemBuilder;
 import org.shadowcrafter.petsouls.pets.PetInterface;
 import org.shadowcrafter.petsouls.util.Players;
 import org.shadowcrafter.petsouls.util.SoulsPlayer;
@@ -29,14 +32,19 @@ public class HandleInventoryClickEvent implements Listener {
 		// Is that player in an inventory view not belonging to this plugin
 		if (list.getPlayer(p).isAllowedToInteractWithInventory()) return;
 		
-		if (list.getPlayer(p).getInventoryView() == Inv.MENU) {
+		ItemStack item = e.getCurrentItem();
+		
+		SoulsPlayer sp = Players.list().getPlayer(p);
+		
+		if (item == null) {
+			e.setCancelled(true);
+			return;
+		}
+		
+		switch (list.getPlayer(p).getInventoryView()) {	
+		
+		case MENU:
 
-			ItemStack item = e.getCurrentItem();
-			
-			SoulsPlayer sp = Players.list().getPlayer(p);
-			
-			if (item == null) return;
-			
 			//Settings and Actions
 			switch (item.getType()) {
 			case ARROW:
@@ -58,7 +66,9 @@ public class HandleInventoryClickEvent implements Listener {
 				break;
 				
 			case BARRIER:
-				p.closeInventory();
+				if (e.getClick() == ClickType.LEFT) {
+					p.closeInventory();
+				}
 				break;
 				
 			case TORCH:
@@ -113,25 +123,71 @@ public class HandleInventoryClickEvent implements Listener {
 				break;
 			}
 			
-			//Spawn / Despawn pet on interaction
-			if (item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName() && e.getClick() == ClickType.LEFT && item.getItemMeta().hasLore()) {
-
-				try {
-					int petNum = Integer.parseInt(item.getItemMeta().getLore().get(0).replaceAll("§7", ""));
-					
-					for (PetInterface pet : TemporaryData.get().getPets(p)) {
-						if (pet.getID() == petNum) {
-							pet.toggleExisting();
-							sp.openPetsMenu(sp.getPage());
-						}
-					}
-					
-				}catch (NumberFormatException x) {
-					//Wow nothing here
-				}
+			//Interactions with pets
+			if (item == null || !item.hasItemMeta() || !item.getItemMeta().hasDisplayName() || !item.getItemMeta().hasLore()) {
+				e.setCancelled(true);
+				return;
 			}
+			
+			int petNum;
+			try {
+				petNum = Integer.parseInt(item.getItemMeta().getLore().get(0).replaceAll("§7", ""));
+			} catch (NumberFormatException x) {
+				e.setCancelled(true);
+				return;
+			}
+			
+			PetInterface pet = null;
+			for (PetInterface i : TemporaryData.get().getPets(p)) {
+				if (i.getID() == petNum) pet = i;
+			}
+			if (pet == null) {
+				e.setCancelled(true);
+				return;
+			}
+			
+			switch (e.getClick()) {
+			case LEFT:
+					pet.toggleExisting();
+					sp.openPetsMenu(sp.getPage());
+				break;
+				
+			case RIGHT:
+				pet.toggleSitting();
+				sp.openPetsMenu(sp.getPage());
+				break;
+				
+			case SHIFT_LEFT:
+				sp.setConfirmableAction(new DeletePetAction(pet));
+				sp.openInventors(Inv.DELETE);
+				break;
+			
+			default:
+				break;
+			}
+			
+			e.setCancelled(true);
+			break;
+			
+		case DELETE:
+			if (e.getCurrentItem() != null && e.getCurrentItem().getType() == Material.RED_WOOL) {
+				e.getClickedInventory().setItem(e.getSlot(), new ItemBuilder(Material.LIME_WOOL).setName("§aConfirmed").build());
+				
+				if (!e.getClickedInventory().contains(Material.RED_WOOL)) {
+					sp.runConfirmableAction();
+					p.closeInventory();
+				}
+			}else if (e.getCurrentItem() != null && e.getCurrentItem().getType() == Material.BARRIER && e.getClick() == ClickType.LEFT) {
+				p.closeInventory();
+			}
+			
+			e.setCancelled(true);
+			break;
+			
+		default:
+			break;
 		}
-		e.setCancelled(true);
+		
 	}
 
 }

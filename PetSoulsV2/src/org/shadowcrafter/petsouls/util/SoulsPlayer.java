@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.shadowcrafter.petsouls.PetSouls;
+import org.shadowcrafter.petsouls.action.ConfirmableAction;
 import org.shadowcrafter.petsouls.inventories.Inv;
 import org.shadowcrafter.petsouls.inventories.Inventories;
 import org.shadowcrafter.petsouls.items.ItemBuilder;
@@ -17,10 +18,10 @@ import org.shadowcrafter.petsouls.items.Recipes;
 import org.shadowcrafter.petsouls.pets.PetInterface;
 
 import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 
 public class SoulsPlayer {
 	
@@ -34,6 +35,19 @@ public class SoulsPlayer {
 	private boolean noCrammingWarning;
 	private boolean welcome;
 	
+	private ConfirmableAction confirmAction;
+	
+	public void setConfirmableAction(ConfirmableAction action) {
+		this.confirmAction = action;
+		update();
+	}
+	
+	public void runConfirmableAction() {
+		if (confirmAction == null) return;
+		confirmAction.run();
+		this.confirmAction = null;
+	}
+	
 	public void welcome(boolean bypass) {
 		if (!welcome && !bypass) return;
 		
@@ -41,11 +55,11 @@ public class SoulsPlayer {
 		config.set("players." + p.getUniqueId() + ".welcome", false);
 		PetSouls.getPlugin().saveConfig();
 		
-		TextComponent text1 = new TextComponent("§2Welcome to PetSouls. To get started watch our");
+		TextComponent text1 = new TextComponent("§aWelcome to PetSouls. To get started watch our");
 		TextComponent clickable = new TextComponent(" §5Tutorial ");
-		TextComponent text2 = new TextComponent("§2or use the");
+		TextComponent text2 = new TextComponent("§aor use the");
 		TextComponent command = new TextComponent(" §5/viewrecipe command");
-		TextComponent text3 = new TextComponent("§2. You can view this message again with the");
+		TextComponent text3 = new TextComponent("§a. You can view this message again with the");
 		TextComponent command2 = new TextComponent("§5 /welcome command");
 		clickable.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=N5iAGUvGWLg"));
 		clickable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder("§aClick to open the tutorial on Youtube").create())));

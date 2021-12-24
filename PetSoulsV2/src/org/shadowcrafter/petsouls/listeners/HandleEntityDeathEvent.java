@@ -19,7 +19,7 @@ public class HandleEntityDeathEvent implements Listener {
 			}
 		}
 		
-		if (petInterfaceToRemove != null) petInterfaceToRemove.removeLife();
+		if (petInterfaceToRemove != null) petInterfaceToRemove.removeLife(true);
 	}
 
 }

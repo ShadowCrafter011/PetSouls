@@ -26,6 +26,10 @@ public interface PetInterface extends ConfigurationSerializable {
 	
 	public void toggleExisting();
 	
+	public void toggleSitting();
+	
+	public Integer getLives();
+	
 	public void spawn(Location loc, boolean message, boolean sitting);
 	
 	public void despawn(boolean message);
@@ -36,7 +40,7 @@ public interface PetInterface extends ConfigurationSerializable {
 	
 	public void addLife();
 	
-	public void removeLife();
+	public void removeLife(boolean message);
 	
 	public Entity getEntity();
 	
