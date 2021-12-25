@@ -29,7 +29,8 @@ public class Inventories {
 		ItemStack despawn = new ItemBuilder(Material.SOUL_TORCH).setName("§cDespawn all your pets").build();
 		
 		Inventory menu = InventoryUtils.fillBorders(Bukkit.createInventory(null, 5*9, "§3Your pets"), gray);
-		Inventory delete = InventoryUtils.fillBorders(Bukkit.createInventory(null, 5*9, "§cConfirm deleting"), gray);
+		Inventory delete = InventoryUtils.fillInventoryWith(Bukkit.createInventory(null, 5*9, "§cConfirm deleting"), gray, false);
+		Inventory recipes = InventoryUtils.fillBorders(Bukkit.createInventory(null, 5*9, "§2Recipes"), gray);
 		
 		delete.setItem(20, confirmationPending);
 		delete.setItem(22, confirmationPending);
@@ -40,6 +41,7 @@ public class Inventories {
 		menu.setItem(3, spawn);
 		menu.setItem(5, despawn);
 		
+		invs.put(Inv.RECIPES, recipes); names.put(Inv.RECIPES, "§2Recipes");
 		invs.put(Inv.MENU, menu); names.put(Inv.MENU, "§3Your pets");
 		invs.put(Inv.DELETE, delete); names.put(Inv.DELETE, "§cConfirm deleting");
 	}
@@ -47,6 +49,10 @@ public class Inventories {
 	public static Inventories list() {
 		if (c == null) c = new Inventories();
 		return c;
+	}
+	
+	public Inventory editContents(Inv inv) {
+		return invs.get(inv);
 	}
 	
 	public Inventory getInventory(Inv inv) {

@@ -12,28 +12,36 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.shadowcrafter.petsouls.inventories.Inv;
+import org.shadowcrafter.petsouls.inventories.Inventories;
 import org.shadowcrafter.petsouls.util.InventoryUtils;
 
 public class Recipes {
 	
-	private ItemStack soulStone;
-	private ItemStack petsItem;
+	private ItemStack soul_stone;
+	private ItemStack soul_realm;
 	
 	private List<ItemStack> items;
+	private Map<ItemStack, ItemKey> keymap;
 	private Map<NamespacedKey, String> shapeMap;
 	private Map<NamespacedKey, ShapedRecipe> recipiesMap;
 	
 	private static Recipes recipies;
 	
 	private Recipes() {
-		soulStone = new ItemBuilder(Material.HEART_OF_THE_SEA).setName("§5Soul Stone").setLore(" ", "§3Used to bind pet souls to yourself", "§3Right click your pets with this item", " ").addEnchant(Enchantment.ARROW_INFINITE, 1).hideEnchants().build();
-		petsItem = new ItemBuilder(Material.AMETHYST_SHARD).setName("§2Realm of Pet Souls").setLore(" ", "§3The place where the souls of", "§3your pets live", "§3[Right Click]", " ").addEnchant(Enchantment.ARROW_INFINITE, 1).hideEnchants().build();
+		soul_stone = new ItemBuilder(Material.HEART_OF_THE_SEA).setName("§5Soul Stone").setLore(" ", "§3Used to bind pet souls to yourself", "§3Right click your pets with this item", " ").addEnchant(Enchantment.ARROW_INFINITE, 1).hideEnchants().build();
+		soul_realm = new ItemBuilder(Material.AMETHYST_SHARD).setName("§2Realm of Pet Souls").setLore(" ", "§3The place where the souls of", "§3your pets live", "§3[Right Click]", " ").addEnchant(Enchantment.ARROW_INFINITE, 1).hideEnchants().build();
 		
 		items = new ArrayList<>();
-		addItemsToList(items, soulStone, petsItem);
+		addItemsToList(items, soul_stone, soul_realm);
 		
-		ShapedRecipe soulStoneR = new ShapedRecipe(NamespacedKeys.getKey(ItemKey.SOUL_STONE), soulStone);
-		ShapedRecipe soulRealmR = new ShapedRecipe(NamespacedKeys.getKey(ItemKey.SOUL_REALM), petsItem);
+		ShapedRecipe soulStoneR = new ShapedRecipe(NamespacedKeys.getKey(ItemKey.SOUL_STONE), soul_stone);
+		ShapedRecipe soulRealmR = new ShapedRecipe(NamespacedKeys.getKey(ItemKey.SOUL_REALM), soul_realm);
+		
+		keymap = new HashMap<>();
+		
+		keymap.put(soul_realm, ItemKey.SOUL_REALM);
+		keymap.put(soul_stone, ItemKey.SOUL_STONE);
 		
 		recipiesMap = new HashMap<>();
 		recipiesMap.put(NamespacedKeys.getKey(ItemKey.SOUL_REALM), soulRealmR);
@@ -63,12 +71,13 @@ public class Recipes {
 	public static Recipes getRecipes() {
 		if (recipies == null) {
 			recipies = new Recipes();
+			recipies.fillRecipesInventory();
 		}
 		return recipies;
 	}
 	
 	public Inventory getShape(NamespacedKey key) {
-		Inventory output = Bukkit.createInventory(null, 5*9, "§3Recipe for: " + recipiesMap.get(key).getResult().getItemMeta().getDisplayName());
+		Inventory output = Bukkit.createInventory(null, 6*9, "§3Recipe for: " + recipiesMap.get(key).getResult().getItemMeta().getDisplayName());
 		output = InventoryUtils.fillInventoryWith(output, new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setName(" ").build(), false);
 		
 		ShapedRecipe recipe = recipiesMap.get(key);
@@ -86,15 +95,28 @@ public class Recipes {
 		}
 		output.setItem(slots[slots.length - 1], recipe.getResult());
 		
+		ItemStack close = new ItemBuilder(Material.BARRIER).setName("§cClose").build();
+		ItemStack back = new ItemBuilder(Material.ARROW).setName("§aBack").build();
+		
+		output.setItem(48, back);
+		output.setItem(49, close);
+		
 		return output;
 	}
 	
+	public void fillRecipesInventory() {
+		Inventory output = Inventories.list().editContents(Inv.RECIPES);
+		for (ItemStack item : items) {
+			output.setItem(output.firstEmpty(), new ItemBuilder(item).addLoreLine("§9[Click] §aTo view this recipe").addLoreLine("§8##id:" + keymap.get(item)).build());
+		}
+	}
+	
 	public ItemStack getSoulStone() {
-		return soulStone;
+		return soul_stone;
 	}
 	
 	public ItemStack getSoulRealm() {
-		return petsItem;
+		return soul_realm;
 	}
 	
 	public List<ItemStack> getItems(){

@@ -1,5 +1,5 @@
 package org.shadowcrafter.petsouls.inventories;
 
 public enum Inv {
-	RECIPE, MENU, DELETE
+	RECIPES, RECIPE, MENU, DELETE
 }

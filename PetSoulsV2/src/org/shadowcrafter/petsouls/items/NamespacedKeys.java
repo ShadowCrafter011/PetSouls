@@ -14,8 +14,8 @@ public class NamespacedKeys {
 	private NamespacedKeys() {
 		keys = new HashMap<>();
 		
-		keys.put(ItemKey.SOUL_REALM, new NamespacedKey(PetSouls.getPlugin(), "petsouls_soulrealm"));
-		keys.put(ItemKey.SOUL_STONE, new NamespacedKey(PetSouls.getPlugin(), "petsouls_soulstone"));
+		keys.put(ItemKey.SOUL_REALM, new NamespacedKey(PetSouls.getPlugin(), "soulrealm"));
+		keys.put(ItemKey.SOUL_STONE, new NamespacedKey(PetSouls.getPlugin(), "soulstone"));
 	}
 	
 	public static NamespacedKeys initialiseKeys() {

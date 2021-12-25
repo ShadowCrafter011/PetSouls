@@ -184,6 +184,33 @@ public class HandleInventoryClickEvent implements Listener {
 			e.setCancelled(true);
 			break;
 			
+		case RECIPES:
+			e.setCancelled(true);
+			if (item != null && item.hasItemMeta() && item.getItemMeta().hasLore()) {
+				String line = item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1);
+				line = line.replaceAll("§8##id:", "");
+				sp.openRecipe(line);
+				p.sendMessage("§aOpened recipe for: §3" + p.getOpenInventory().getTitle().replaceFirst("§3Recipe for: ", ""));
+			}
+			break;
+			
+		case RECIPE:
+			e.setCancelled(true);
+			if (item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+				switch (item.getItemMeta().getDisplayName()) {
+				case "§aBack":
+					p.performCommand("viewrecipe");
+					break;
+					
+				case "§cClose":
+					p.closeInventory();
+					break;
+				
+				default:
+					break;
+				}
+			}
+			
 		default:
 			break;
 		}
