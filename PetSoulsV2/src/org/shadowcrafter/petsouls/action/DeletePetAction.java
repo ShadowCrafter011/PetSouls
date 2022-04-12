@@ -18,7 +18,7 @@ public class DeletePetAction implements ConfirmableAction {
 			pet.removeLife(false);
 			if (pet.getLives() == 0) {
 				String name = pet.getName() == null ? StringUtils.firstUpperCase(pet.getType().toString().toLowerCase()) : pet.getName();
-				Bukkit.getPlayer(pet.getOwner()).sendMessage("ง8" + name + " travelled to the realm of dead souls, following your commandment. May that brave and loyal soul rest in piece");
+				Bukkit.getPlayer(pet.getOwner()).sendMessage("ยง8" + name + " travelled to the realm of dead souls, following your commandment. May that brave and loyal soul rest in peace");
 				break;
 			}
 		}
